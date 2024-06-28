@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h1>{{ listing.title }}</h1>
+<p>{{ listing.description }}</p>
+<p>Current Bid: {{ listing.current_bid|default:listing.starting_bid }}</p>
+{% if listing.image_url %}
+    <img src="{{ listing.image_url }}" alt="Image of {{ listing.title }}">
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if is_owner %}
+        <!-- Define a JavaScript function to redirect -->
+        <script type="text/javascript">
+            function closeAuction(listingId) {
+                var url = "{% url 'close_auction' 0 %}".replace('0', listingId);
+                window.location.href = url;
+            }
+        </script>
+        <!-- Use the function in the onclick event -->
+        <button onclick="closeAuction('{{ listing.id }}')">Close Auction</button>    
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {{ bid_form.as_p }}
+            <button type="submit" name="place_bid">Place Bid</button>
+        </form>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" name="add_comment">Add Comment</button>
+        </form>
+    {% endif %}
+    {% if has_won %}
+        <p>Congratulations! You won this auction!</p>
+    {% endif %}
+{% endif %}
+{% for comment in comments %}
+    <div>
+        <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+    </div>
+{% endfor %}
+{% endblock %}

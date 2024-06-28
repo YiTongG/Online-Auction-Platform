@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Close Auction</h2>
+    <p>Are you sure you want to close the auction for "{{ listing.title }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, close the auction</button>
+        <a href="{% url 'listing_page' listing.id %}">Cancel</a>
+    </form>
+{% endblock %}

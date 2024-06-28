@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Advanced Search</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <a href="index.html">Google Search</a>
+        </div>
+        <form action="https://www.google.com/search">
+            <div class="form-group">
+                <label for="as_q">all these words:</label>
+                <input type="text" name="as_q" id="as_q"><br>
+            </div>
+            <div class="form-group">
+                <label for="as_epq">this exact word or phrase:</label>
+                <input type="text" name="as_epq" id="as_epq"><br>
+            </div>
+            <div class="form-group">
+                <label for="as_oq">any of these words:</label>
+                <input type="text" name="as_oq" id="as_oq"><br>
+            </div>
+            <div class="form-group">
+                <label for="as_eq">none of these words:</label>
+                <input type="text" name="as_eq" id="as_eq"><br>
+            </div>
+            <div class="button-container">
+                <input type="submit" value="Advanced Search">
+            </div>
+            
+        </form>
+        <script>
+            function processForm(event) {//script to deal with any of these words and none of the word 
+                event.preventDefault();
+                //deal with any of these words
+                const asOqInput = document.getElementById('as_oq');
+                const asOqValue = asOqInput.value;
+                if(asOqValue) {
+                    const transformedAsOqValue = asOqValue
+                        .split(' ')
+                        .join('+');
+                    asOqInput.value = transformedAsOqValue;
+                }
+
+                //deal with none of the words
+                const asEqInput = document.getElementById('as_eq');
+                const asEqValue = asEqInput.value;
+
+                if (asEqValue) {
+                    const transformedAsEqValue = asEqValue
+                        .split(' ')
+                        .map(word => '-' + word)
+                        .join(' ');
+                    asEqInput.value = transformedAsEqValue;
+                }
+                event.target.submit();
+            }
+        </script>
+    </body>
+</html>
