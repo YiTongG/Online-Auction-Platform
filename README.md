@@ -1,5 +1,5 @@
-
 ###commerce: a ebay-like auction website:
+
 - **Features**: 
   - Users can create and manage auction listings, place bids, add items to a watchlist, and comment on listings.
   - The site provides pages for active listings, detailed listing views, user watchlists, and categories.
