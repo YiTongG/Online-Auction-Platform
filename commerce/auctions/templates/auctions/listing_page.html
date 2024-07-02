@@ -1,42 +1,66 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h1>{{ listing.title }}</h1>
+<h1 class="purple">{{ listing.title }}</h1>
 <p>{{ listing.description }}</p>
 <p>Current Bid: {{ listing.current_bid|default:listing.starting_bid }}</p>
+<p>Category: {{ listing.category.name }}</p> <!-- Category Information -->
+<p>Listed by: {{ listing.creator.username }}</p> <!-- Listing by Information -->
 {% if listing.image_url %}
-    <img src="{{ listing.image_url }}" alt="Image of {{ listing.title }}">
+    <img src="{{ listing.image_url }}" alt="Image of {{ listing.title }}" class="img-fluid mb-3">
 {% endif %}
 
 {% if user.is_authenticated %}
+    {% if listing in user.watchlist.all %}
+        <p><span class="badge badge-info">In your Watchlist</span></p>
+    {% endif %}
     {% if is_owner %}
-        <!-- Define a JavaScript function to redirect -->
         <script type="text/javascript">
             function closeAuction(listingId) {
                 var url = "{% url 'close_auction' 0 %}".replace('0', listingId);
                 window.location.href = url;
             }
         </script>
-        <!-- Use the function in the onclick event -->
-        <button onclick="closeAuction('{{ listing.id }}')">Close Auction</button>    
+        <button onclick="closeAuction('{{ listing.id }}')" class="btn btn-warning">Close Auction</button>
     {% else %}
-        <form method="post">
-            {% csrf_token %}
-            {{ bid_form.as_p }}
-            <button type="submit" name="place_bid">Place Bid</button>
-        </form>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit" name="add_comment">Add Comment</button>
-        </form>
-    {% endif %}
-    {% if has_won %}
-        <p>Congratulations! You won this auction!</p>
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        {% if user in listing.watchlisted_by.all %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="remove_from_watchlist" class="btn btn-danger">Remove from Watchlist</button>
+            </form>
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="add_to_watchlist" class="btn btn-primary">Add to Watchlist</button>
+            </form>
+        {% endif %}
+        {% if listing.active %}
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                {{ bid_form.as_p }}
+                <button type="submit" name="place_bid" class="btn btn-success">Place Bid</button>
+            </form>
+            <form method="post" class="mt-3">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" name="add_comment" class="btn btn-secondary">Add Comment</button>
+            </form>
+        {% else %}
+            {% if has_won %}
+                <h2 class="text-success">Congratulations! You won this auction!</h2>
+            {% else %}
+                <p class="text-danger">This auction is closed.</p>
+            {% endif %}
+        {% endif %}
     {% endif %}
 {% endif %}
 {% for comment in comments %}
-    <div>
+    <div class="mt-3">
         <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
     </div>
 {% endfor %}

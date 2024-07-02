@@ -6,8 +6,11 @@ class ListingForm(forms.ModelForm):
         model = AuctionListing
         fields = ['title', 'description', 'starting_bid', 'image_url', 'category']
         widgets = {
-            'description': forms.Textarea(attrs={'cols': 80, 'rows': 5}),
-            'starting_bid': forms.NumberInput(attrs={'step': '0.01'}),
+            'title': forms.TextInput(attrs={'class': 'custom-input'}),
+            'description': forms.Textarea(attrs={'class': 'custom-input', 'cols': 80, 'rows': 5}),
+            'starting_bid': forms.NumberInput(attrs={'class': 'custom-input', 'step': '0.01'}),
+            'image_url': forms.URLInput(attrs={'class': 'custom-input'}),
+            'category': forms.Select(attrs={'class': 'custom-input'}),
         }
 
     def __init__(self, *args, **kwargs):
